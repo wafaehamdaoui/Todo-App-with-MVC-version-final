@@ -2,7 +2,12 @@
 
 **Notes:**
 
-Please To login use M.belcaid as a username , and 000000 as a password .
+Please before execute the project change the path of Tasks and Login database in login.cpp and mainwindow.cpp  .
+
+Then please go to terminal and INSERT INTO Login TABLE the following rows:
+
+![belcaid](https://user-images.githubusercontent.com/75392302/149240019-90600370-ea6a-48bd-a56b-f60ea5fcdabd.PNG)
+
 
 ## Introduction:
 Todo list is an application for organization of a list of tasks you need to complete, or things that you want to do in order of Date (and may be in order of priority). The first part of the project will focus on the core features and skeleton of the application . In part two we’ll take care of text-formatting ( like add, remove, save, clear... ). And in part three, we’ll add some useful extensions like login and find dialog.
@@ -694,7 +699,8 @@ Reject Login:
 ![image](https://user-images.githubusercontent.com/75392302/149222525-3ac06bf4-4686-4593-b2ec-c86879381583.png)
 ![image](https://user-images.githubusercontent.com/75392302/149222262-5bfdcf1c-43f2-48c1-ba33-cef8726dc027.png)
 
-
+ I Added a double click on each row, this bring the same dialog I used to create the task, bug now it's filled with task information (desciption, finished ...). The user could modify any apect this task by editing the dialog.
+ 
 
 
 
