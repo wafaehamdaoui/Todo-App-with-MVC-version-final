@@ -9,6 +9,7 @@ Todo list is an application for organization of a list of tasks you need to comp
 
 **This is what it’ll look like at the end of this project**
 
+![image](https://user-images.githubusercontent.com/75392302/149039858-a4e272de-b883-4657-a647-c954fc2444ab.png)
 
 Before we get started, we need to add resources files for icons.
 
@@ -28,7 +29,7 @@ In the file manager, select the files to be added.
  The application provides File, Options, Window and Help entries in the menu bar, with the following Actions:
  
 ![image](https://user-images.githubusercontent.com/75392302/147761593-7fd483f2-85a2-42bc-ac1f-9b5290d4aeac.png)
-![image](https://user-images.githubusercontent.com/75392302/147761652-439ea387-aaf9-48b6-873c-398f96b6ab0b.png)
+![image](https://user-images.githubusercontent.com/75392302/149039955-19c4db0f-379f-4ca7-8a5e-0932a1292f1f.png)
 ![image](https://user-images.githubusercontent.com/75392302/147761717-341effc9-48bb-4f63-8992-e6c29bd34496.png)
 ![image](https://user-images.githubusercontent.com/75392302/147761772-c13378eb-d46d-4f05-b5d3-201d64f583f2.png)
 
@@ -93,13 +94,13 @@ we will need three Qlables for descripe the category of those three lists . Also
         pVLayout->addWidget(completedList);
 
         pendingList->setStyleSheet
-        ("QListWidget { font-size: 10pt; font-weight: bold; }");
+        ("QListWidget { font-size: 9pt; font-weight: bold; }");
 
         completedList->setStyleSheet
-        ("QListWidget { font-size: 10pt; font-weight: bold; }");
+        ("QListWidget { font-size: 9pt; font-weight: bold; }");
 
         todayList->setStyleSheet
-        ("QListWidget { font-size: 10pt; font-weight: bold; }");
+        ("QListWidget { font-size: 9pt; font-weight: bold; }");
 ```
 As you can see we use setStyleSheet() function to set style for my lists . 
 Also setDefaultDropAction() function that holds the drop action .
@@ -129,11 +130,26 @@ Connect the QAction’s triggered signal to a slot function.
   connect(RemoveAction, &QAction::triggered, this, &MainWindow::RemoveTask);
 ```
 
-**Save :** Action to save Tasks in a txt file .
+**Save :** Action to save Tasks in a csv file .
 ```cpp
-   saveAction = new QAction("Save",this);
-   saveAction->setIcon(QIcon(":/save.gif"));
-   connect(saveAction, &QAction::triggered, this, &MainWindow::save);
+   saveActionP = new QAction("Pending List",this);
+   saveActionP->setIcon(QIcon(":/pending.jfif"));
+   saveActionT = new QAction("Today List",this);
+   saveActionT->setIcon(QIcon(":/today.png"));
+   saveActionF = new QAction("Finished List",this);
+   saveActionF->setIcon(QIcon(":/completed.jfif"));
+   connect(saveActionP, &QAction::triggered, this, &MainWindow::savePending);
+   connect(saveActionT, &QAction::triggered, this, &MainWindow::saveToday);
+   connect(saveActionF, &QAction::triggered, this, &MainWindow::saveFinished);
+
+```
+we create a menu and we add those actions to it , using addAction() functions. And we add this menu to Options Menu using addMenu() function.
+
+```cpp
+        auto save = OptionsMenu->addMenu("&Save");
+        save->addAction(saveActionP);
+        save->addAction(saveActionT);
+        save->addAction(saveActionF);
 ```
 
 **close :** Action to close the application .
@@ -241,11 +257,11 @@ This dialog prompts the user to enter the new taks the date of task, to choose a
 
  First we Create a Form Class,
  
- Using the designer obtain the following the form:
+ Using the designer obtain the following form:
 
 ![image](https://user-images.githubusercontent.com/75392302/147767524-a1c49f7d-a727-4ddf-87c6-7005ee429b0a.png)
 
-And we add  public Getters for the line edit text  ,  date edit value ,combo box text and finally we need a function verify if the checkBox is Checked or not to get the information about the task and in which list it will be added.
+And we add  public Getters and setters for the line edit text  ,  date edit value ,combo box text and finally we need a function verify if the checkBox is Checked or not to get the information about the task and in which list it will be added.
 ```cpp
 // Return whether or not 'checkbox' UI element is checked
 bool Tasks::isCompleted() const
@@ -280,47 +296,108 @@ bool Tasks::isToday(){
         return true;
     return false;
 }
+void Tasks::setDescription(QString description) const{
+    ui->lineEdit->setText(description);
+}
+
+void Tasks::setTag(QString tag) const
+{
+    ui->comboBox->setCurrentText(tag);
+}
+
+
+void Tasks::SetDate(QDate date) const
+{
+     ui->dateEdit->setDate(date);
+}
+
 
 ```
-So in add() function we just create the dialog , Execute the dialog and store the user response. Then we check if the checkBox is Checked , if yes we add the task in completed list, if not we check if the date is today date if yes we add task to Today list if not we add it to Pending list.
+So in add() function we just create the dialog , Execute the dialog and store the user response. Then we check if dialog is accepted , if yes we call Addquery() and loadList() functions. add the task in completed list, if not we check if the date is today date if yes we add task to Today list if not we add it to Pending list.
 
 ```cpp
-//Creating the dialog
+
+    //Creating the dialog
         Tasks D;
 
-        //Executing the dialog and storing the user response
+//        Executing the dialog and storing the user response
         auto reply = D.exec();
 
-        //Checking if the dialog is accepted
+//        Checking if the dialog is accepted
         if(reply == Tasks::Accepted)
         {
-            auto temp = "Task: "+D.getDescription()+" ,Tg: "+D.getTag()+" ,Due: "+D.getDate();
-
-            if(D.isCompleted()){
-                completedList->insertItem(completedList->count(),temp);
-            }else if(D.isToday()){
-                todayList->insertItem(todayList->count(),temp);
-            }else{
-                pendingList->insertItem(pendingList->count(),temp);
-            }
+            Addquery(D.getDescription() , D.getTag()  , D.getDate(), D.isCompleted());
+            loadList();
 
         }
+```
+**Addquery**
+
+So we create a QSqlQuery and we execute the insert query to add a row in sql table , to get values we call tasks getters class. If  we can execute the query we show a critical message .
+
+```cpp
+void MainWindow::Addquery(QString description ,QString Tag , QString date, bool finished )
+{
+    auto query = new QSqlQuery(db);
+    QString insert{"INSERT INTO Tasks Values('%1','%2','%3','%4')"};
+    if(!query->exec(insert.arg(description).arg(Tag).arg(date).arg(finished)))
+         QMessageBox::critical(this,"Error","could not insert the task");
+}
+```
+
+**LoadList**
+for this method we do some test to organise tasks in Tables View .
+
+So we select all row for finished equal true and we add them to complited list ,
+
+And we select all row for date equal to today date and we add them to Today list ,
+
+the rest rows we add them to pending list.
+
+```cpp
+void MainWindow::loadList(){
+    //model
+    auto model = new QSqlQueryModel;
+    auto query = new QSqlQuery(db);
+    QString view{"SELECT * FROM Tasks WHERE finished=TRUE"};
+    query->exec(view);
+    model->setQuery(*query);
+    completedList->setModel(model);
+
+    auto TodayDate=QDate::currentDate().toString();
+
+    auto model1 = new QSqlQueryModel;
+    auto query1 = new QSqlQuery(db);
+    QString view1{"SELECT * FROM Tasks WHERE finished=FALSE AND Date='"+TodayDate+"'"};
+    query1->exec(view1);
+    model1->setQuery(*query1);
+    todayList->setModel(model1);
+
+
+    //pending list:
+    auto model2 = new QSqlQueryModel;
+    auto query2 = new QSqlQuery(db);
+    QString view2{"SELECT * FROM Tasks WHERE finished=FALSE AND Date!='"+TodayDate+"'"};
+    query2->exec(view2);
+    model2->setQuery(*query2);
+//    int rowCount = model2->rowCount();
+    pendingList->setModel(model2);
+
 
 }
 ```
+
 **Tests:**
 
-![image](https://user-images.githubusercontent.com/75392302/147775525-b8289995-7345-43ff-a75d-a5c11402fe1a.png)
+![image](https://user-images.githubusercontent.com/75392302/149041929-a529b79d-7c8a-4951-a59d-e5d499abe444.png)
 
-![image](https://user-images.githubusercontent.com/75392302/147775619-06e3db6b-afe4-44c9-8bb2-5abac4c1174f.png)
-![image](https://user-images.githubusercontent.com/75392302/147775692-98751261-1541-4ab1-af1e-f965fd30cbd3.png)
-![image](https://user-images.githubusercontent.com/75392302/147776061-09342050-3d9c-4779-b9f2-c2f3b648dac3.png)
-![image](https://user-images.githubusercontent.com/75392302/147776105-baaf08cc-efb7-4f86-aa55-24111b062318.png)
+![image](https://user-images.githubusercontent.com/75392302/149041865-693a823f-4722-4830-862f-fa01a7fa15e6.png)
+![image](https://user-images.githubusercontent.com/75392302/149042020-b0aa9941-b025-444e-93f1-247e10ea5eac.png)
+![image](https://user-images.githubusercontent.com/75392302/149042112-c572823d-0141-4fa1-ac43-cad82b5bdc1f.png)
 
 Here is the result:
 
-![image](https://user-images.githubusercontent.com/75392302/147776179-1139fe82-724e-443d-b9c0-dff03a848c53.png)
-
+![image](https://user-images.githubusercontent.com/75392302/149042155-dc35fc71-d09c-4b2d-9fb2-4f7c57b2791a.png)
 
 ***RemoveTask***
 
@@ -334,7 +411,7 @@ This dialog prompts the user to enter the taks wanted to delete.
  
  Using the designer obtain the following the form:
  
- ![image](https://user-images.githubusercontent.com/75392302/147769268-5194b58d-1614-47d0-85ae-dbf5f934dc44.png)
+ ![image](https://user-images.githubusercontent.com/75392302/149043064-c4e110a5-ba4c-4ef8-937c-ae5bf8397815.png)
 
 And we add a public Getter for the line edit Text to get the task to remove .
 
@@ -343,68 +420,75 @@ QString Remove::getRemoved() const{
     return ui->lineEdit->text();
 }
 ```
-So in remove() function we just create the dialog , Execute the dialog and store the user response. Then we check wich list contains this task and remove it using delete word.
+So in remove() function we just create the dialog , Execute the dialog and store the user response. Then we check wich list contains this task and remove it using DELETE sql function .
 ```cpp
-//Creating the dialog
-     Remove D;
+void MainWindow::RemoveTask()
+{
+    auto reply=QMessageBox::question(this,"Remove Task","do you really want to remove this task ??");
+     if(reply == QMessageBox::Yes){
+         //Creating the dialog
+           Remove D;
 
-     //Executing the dialog and storing the user response
-     auto reply = D.exec();
+          //Executing the dialog and storing the user response
+           auto reply = D.exec();
 
-     //Checking if the dialog is accepted
-     if(reply == Remove::Accepted)
-     {
-         for(int row=pendingList->count()-1;row>=0;row--){
-             if(pendingList->item(row)->text().contains(D.getRemoved())){
-                     delete pendingList->item(row);
+           //Checking if the dialog is accepted
 
-             }
-         }
-         for(int row=completedList->count()-1;row>=0;row--){
-             if(completedList->item(row)->text().contains(D.getRemoved())){
-                     delete completedList->item(row);
-             }
-         }
-         for(int row=todayList->count()-1;row>=0;row--){
-             if(todayList->item(row)->text().contains(D.getRemoved())){
-                     delete todayList->item(row);
-             }
-         }
+          if(reply == Remove::Accepted){
+              auto model = new QSqlQueryModel;
+              auto query = new QSqlQuery(db);
+              QString view{"DELETE FROM Tasks WHERE Description='"+D.getDescription()+"' "};
+              query->exec(view);
+              model->setQuery(*query);
+              pendingList->setModel(model);
+              completedList->setModel(model);
+              todayList->setModel(model);
+              loadList();
+          }
+
+     }
+}
 ```
 **Test:**
 
-![image](https://user-images.githubusercontent.com/75392302/147775309-baf631e5-a8a5-48ba-87d8-16ee6086353c.png)
-![image](https://user-images.githubusercontent.com/75392302/147775357-915f3fe4-ae70-4dee-84bf-0668a2cb863f.png)
-
+![image](https://user-images.githubusercontent.com/75392302/149043356-ff86510e-cf79-47de-8c9d-7897d1d19883.png)
+![image](https://user-images.githubusercontent.com/75392302/149043188-ab1d4dcd-8413-40fe-bdc6-4122e8c4612e.png)
+![image](https://user-images.githubusercontent.com/75392302/149043404-44b0ba58-3773-4b64-b49f-b0b138074eb4.png)
+![image](https://user-images.githubusercontent.com/75392302/149043456-14520588-d2f5-43b1-ad6c-5bb8bf046eb7.png)
 
  ***clear*** 
  
- We just call QListWidget::clear() function.
+ We just call SQL DELETE function.
  ```cpp
 void MainWindow::clear()
 {
-    pendingList->clear();
-    completedList->clear();
-    todayList->clear();
+    //model
+    auto model = new QSqlQueryModel;
+    auto query = new QSqlQuery(db);
+    QString view{"DELETE FROM Tasks "};
+    query->exec(view);
+    model->setQuery(*query);
+    pendingList->setModel(model);
+    loadList();
 }
  ```
  **Test:**
  
- ![image](https://user-images.githubusercontent.com/75392302/147775357-915f3fe4-ae70-4dee-84bf-0668a2cb863f.png)
- ![image](https://user-images.githubusercontent.com/75392302/147775446-426258c4-ee09-45de-9ee2-69ebc71c714f.png)
+ ![image](https://user-images.githubusercontent.com/75392302/149043777-042000b6-0691-47bd-9c6b-eaf443b03a72.png)
+ ![image](https://user-images.githubusercontent.com/75392302/149043824-edb0c466-cdca-41f0-94ce-9d119bd5ab39.png)
 
  
  ***Save***
+ 
+ To save a table view we can go to option menu click on savemenu and choose the list that we want to save.
  ```cpp
- void MainWindow::save()
+ void MainWindow save()
     {
-
-        //Creating a file dialog to choose a file graphically
+    //Creating a file dialog to choose a file graphically
         auto dialog = new QFileDialog(this);
 
         //Check if the current file has a name or not
-        if(currentFile == "")
-        {
+        if(currentFile == "")        {
            currentFile = dialog->getSaveFileName(this,"choose your file");
 
            //Update the window title with the file name
@@ -415,12 +499,7 @@ void MainWindow::clear()
        if( currentFile != ""){
 
                saveList(pendingList,currentFile);
-               saveList(todayList,currentFile);
-               saveList(completedList,currentFile);
-
-                      }
-
-    }   
+    }
  ```
  Creating a file dialog to choose a file graphically.
  
@@ -430,66 +509,49 @@ void MainWindow::clear()
  
  If the user clicks Cancel, the returned file name is empty, and we do nothing.
  
- **saveList()** function store the contenent of a QListWidget in a txt file
+ **saveList()** function store the contenent of a QListWidget in a csv file
  ```cpp
- void MainWindow::saveList(QListWidget *listWidget , QString filename){
-    QFile file(filename);
-        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            // bind it
-            QTextStream stream(&file);
-            for (int i = 0; i <listWidget->count(); i++) {
-                QListWidgetItem *item = listWidget->item(i);
-                stream << item->text() << '\n';
-            }
+ void MainWindow::saveList(QTableView *listWidget , QString filename){
+    QString textData;
+    int rows = listWidget->model()->rowCount();
+    int columns = listWidget->model()->columnCount();
 
-            file.close();
+    // .csv
+    QFile csvFile(filename);
+    if(csvFile.open(QIODevice::WriteOnly)) {
+
+        QTextStream stream(&csvFile);
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+
+                    textData += listWidget->model()->data(listWidget->model()->index(i,j)).toString();
+                    textData += ", "  ;    // for .csv file format
+            }
+            textData += "\n";
         }
-}
+        stream << textData;
+
+        csvFile.close();}
+    }
  ```
  **Test:**
  
-![image](https://user-images.githubusercontent.com/75392302/147774821-5dade876-c7a4-457e-aa16-1eb89c1607e5.png)
-![image](https://user-images.githubusercontent.com/75392302/147774975-0a666b38-83d1-432a-8b8d-2e545b72c96c.png)
-![image](https://user-images.githubusercontent.com/75392302/147775045-9176c89e-fb31-4437-a36b-1b07936c578f.png)
-
+![image](https://user-images.githubusercontent.com/75392302/149044719-6c887754-930c-4d3c-95c4-a70bdb5bd40f.png)
+![image](https://user-images.githubusercontent.com/75392302/149044771-786fe1dd-6144-4951-9253-8951565c1618.png)
+![image](https://user-images.githubusercontent.com/75392302/149044847-4357e826-ff25-4d0a-b2bd-5abeff4b849b.png)
  
  ***Close***
 
 When the user attempts to close the window, we call the private function Close().
 ```cpp
-void SpreadSheet::close()
+   void MainWindow::close()
 {
-    saveList(pendingList,currentFile);
-    saveList(todayList,currentFile);
-    saveList(completedList,currentFile);
-    
-    auto reply = QMessageBox::question(this, "Exit",
-                                       "Do you really want to quit?");
-    if(reply == QMessageBox::Yes)
-        qApp->exit();
+        auto reply = QMessageBox::question(this, "Exit",
+                                           "Do you really want to quit?");
+        if(reply == QMessageBox::Yes)
+            qApp->exit();
 }
 ```
- As you can see before closing the app we need to srore the contenent of each list in a txt file .
- 
- And if I want to start the app again we need to load those file In order to save  what we have already write.
- 
- **load implementation:**
- ```cpp
- void MainWindow::loadList(QListWidget *listWidget , QString filename){
-    QFile file(filename);
-            if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                // bind it
-                QTextStream in(&file);
-
-                while(!in.atEnd()) {
-                    QString line = in.readLine();
-                    listWidget->addItem(line);
-                }
-
-                file.close();
-       }
-}
- ```
  
  ***About***
  
@@ -512,7 +574,7 @@ This dialog prompts the user for a input and seek Item that contains the entered
  
  Using the designer obtain the following the form:
 
-![image](https://user-images.githubusercontent.com/75392302/147771845-3557c389-ae8f-4191-b079-fa5781650c4a.png)
+![image](https://user-images.githubusercontent.com/75392302/149045169-bfa05768-82d4-4145-9778-b772f2a8c48f.png)
 
 And we add a public Getter for the line edit Text to get the cell address:
 ```cpp
@@ -524,7 +586,7 @@ QString Find::find() const
 
 **Now we are setup to create the interesting connexion between the find_function slot and find actions :**
 
-First we will create the proper slot called goCellSlot to respond to the action trigger.
+First we will create the proper slot fpnd() to respond to the action trigger.
 
  ```cpp
  private slots:
@@ -538,45 +600,40 @@ connect(find, &QAction::triggered, this, &SpreadSheet::find_function);
 Here is the implementation of find() function:
 
 ```cpp
-void MainWindow::find(){
+ //Creating the dialog
+        Find D;
 
-    //Creating the dialog
-     Find D;
+       //Executing the dialog and storing the user response
+        auto reply = D.exec();
 
-     //Executing the dialog and storing the user response
-     auto reply = D.exec();
+       //Checking if the dialog is accepted
+        if(reply == Find::Accepted)
+         {
 
-     //Checking if the dialog is accepted
-     if(reply == Find::Accepted)
-     {
+           //Getting the search text
+           auto search = D.getsearch();
+           for(int row=pendingList->model()->rowCount();row>=0;row--){
+               if(pendingList->model()->data(pendingList->model()->index(row,0)).toString()==search)
+                   pendingList->setCurrentIndex(pendingList->model()->index(row,0));
+           }
+           for(int row=todayList->model()->rowCount();row>=0;row--){
+               if(todayList->model()->data(todayList->model()->index(row,0)).toString()==search)
+                   todayList->setCurrentIndex(todayList->model()->index(row,0));
+           }
+           for(int row=completedList->model()->rowCount();row>=0;row--){
+               if(completedList->model()->data(completedList->model()->index(row,0)).toString()==search)
+                   completedList->setCurrentIndex(completedList->model()->index(row,0));
+           }
 
-         //Getting the search text
-         auto search = D.getsearch();
-         for(int row=pendingList->count()-1;row>=0;row--){
-             if(pendingList->item(row)->text().contains(search)){
-                     pendingList->setCurrentRow(row);
-//                     pendingList->item(row)->(Qt::);
-             }
-         }
-         for(int row=completedList->count()-1;row>=0;row--){
-             if(completedList->item(row)->text().contains(search)){
-                     completedList->setCurrentRow(row);
-             }
-         }
-         for(int row=todayList->count()-1;row>=0;row--){
-             if(todayList->item(row)->text().contains(search)){
-                     todayList->setCurrentRow(row);
-             }
-         }
-     }
-}
+
+   }
+
 
 ```
 Here is a simple test:
 
-![image](https://user-images.githubusercontent.com/75392302/147773982-3cf804a8-58bd-4ed1-8ab5-f39199d4d410.png)
-![image](https://user-images.githubusercontent.com/75392302/147774641-15f220c2-c962-46cb-9750-389582c94461.png)
-
+![image](https://user-images.githubusercontent.com/75392302/149045627-9ab4f07e-81a4-4761-a60e-18862d0d9c49.png)
+![image](https://user-images.githubusercontent.com/75392302/149045955-c0768404-2975-41dd-8af3-feee315853f2.png)
 
 ### Login Dialog
 
@@ -605,7 +662,6 @@ void Login::on_pushButton_clicked()
    }
 }
 ```
-**Note**: for this part I prefer to have  a list of users and their passwords . I don't use database concept because I'm not familiar with it , but I will try to use it in the next projects.
 
 **Now we are setup to create the interesting connexion between the login page and mainwondow page**
 so we go to the main and we verify if the value of acceptLogin is true , if yes we show mainwindow if not we show a warning  message;
