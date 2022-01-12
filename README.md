@@ -456,6 +456,7 @@ void MainWindow::RemoveTask()
 ![image](https://user-images.githubusercontent.com/75392302/149043404-44b0ba58-3773-4b64-b49f-b0b138074eb4.png)
 ![image](https://user-images.githubusercontent.com/75392302/149043456-14520588-d2f5-43b1-ad6c-5bb8bf046eb7.png)
 
+
  ***clear*** 
  
  We just call SQL DELETE function.
