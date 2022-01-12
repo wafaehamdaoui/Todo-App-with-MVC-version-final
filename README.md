@@ -454,6 +454,9 @@ void MainWindow::RemoveTask()
 ![image](https://user-images.githubusercontent.com/75392302/149043356-ff86510e-cf79-47de-8c9d-7897d1d19883.png)
 ![image](https://user-images.githubusercontent.com/75392302/149043188-ab1d4dcd-8413-40fe-bdc6-4122e8c4612e.png)
 ![image](https://user-images.githubusercontent.com/75392302/149043404-44b0ba58-3773-4b64-b49f-b0b138074eb4.png)
+
+Here is the result:
+
 ![image](https://user-images.githubusercontent.com/75392302/149043456-14520588-d2f5-43b1-ad6c-5bb8bf046eb7.png)
 
 
@@ -539,7 +542,7 @@ void MainWindow::clear()
  **Test:**
  
 ![image](https://user-images.githubusercontent.com/75392302/149044719-6c887754-930c-4d3c-95c4-a70bdb5bd40f.png)
-![image](https://user-images.githubusercontent.com/75392302/149044771-786fe1dd-6144-4951-9253-8951565c1618.png)
+![image](https://user-images.githubusercontent.com/75392302/149098659-9271f0af-a47d-49df-856f-072dfdb0a783.png)
 ![image](https://user-images.githubusercontent.com/75392302/149044847-4357e826-ff25-4d0a-b2bd-5abeff4b849b.png)
  
  ***Close***
