@@ -475,6 +475,7 @@ void MainWindow::clear()
  **Test:**
  
  ![image](https://user-images.githubusercontent.com/75392302/149043777-042000b6-0691-47bd-9c6b-eaf443b03a72.png)
+ 
  ![image](https://user-images.githubusercontent.com/75392302/149043824-edb0c466-cdca-41f0-94ce-9d119bd5ab39.png)
 
  
