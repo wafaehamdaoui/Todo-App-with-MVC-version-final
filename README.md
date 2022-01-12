@@ -2,7 +2,7 @@
 
 **Notes:**
 
-Please To login use wafae as a username , and 123456 as a password .
+Please To login use M.belcaid as a username , and 000000 as a password .
 
 ## Introduction:
 Todo list is an application for organization of a list of tasks you need to complete, or things that you want to do in order of Date (and may be in order of priority). The first part of the project will focus on the core features and skeleton of the application . In part two we’ll take care of text-formatting ( like add, remove, save, clear... ). And in part three, we’ll add some useful extensions like login and find dialog.
@@ -686,15 +686,13 @@ int main(int argc, char *argv[])
 **Tests:**
 Accept Login:
 
-![image](https://user-images.githubusercontent.com/75392302/147774248-19a068f2-5710-4daa-905b-f0c2e2361086.png)
-![image](https://user-images.githubusercontent.com/75392302/147774280-13122ae2-a7fc-4b8b-9a94-9161ddf18e04.png)
-
-![image](https://user-images.githubusercontent.com/75392302/147774396-c203762d-4f5b-4cf2-8c76-e4ae4d4ce15f.png)
+![image](https://user-images.githubusercontent.com/75392302/149222059-882ed7a0-55b0-4b38-bfc2-102ebae8a6c3.png)
+![image](https://user-images.githubusercontent.com/75392302/149222155-ec8e9583-4a03-478e-8af2-3a04c6e4985a.png)
 
 Reject Login:
 
-![image](https://user-images.githubusercontent.com/75392302/147774507-93dec6ff-b374-45b5-b882-0f5b9036bfaf.png)
-![image](https://user-images.githubusercontent.com/75392302/147774533-6913425d-2a07-4e1f-b7e7-459f9688b93f.png)
+![image](https://user-images.githubusercontent.com/75392302/149222525-3ac06bf4-4686-4593-b2ec-c86879381583.png)
+![image](https://user-images.githubusercontent.com/75392302/149222262-5bfdcf1c-43f2-48c1-ba33-cef8726dc027.png)
 
 
 
