@@ -542,7 +542,7 @@ void MainWindow::clear()
  **Test:**
  
 ![image](https://user-images.githubusercontent.com/75392302/149044719-6c887754-930c-4d3c-95c4-a70bdb5bd40f.png)
-![image](https://user-images.githubusercontent.com/75392302/149098659-9271f0af-a47d-49df-856f-072dfdb0a783.png)
+![image](https://user-images.githubusercontent.com/75392302/149099052-502cbd82-a230-4342-b231-b41d1f22403d.png)
 ![image](https://user-images.githubusercontent.com/75392302/149044847-4357e826-ff25-4d0a-b2bd-5abeff4b849b.png)
  
  ***Close***
