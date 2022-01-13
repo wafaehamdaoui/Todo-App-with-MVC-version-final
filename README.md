@@ -721,7 +721,9 @@ finally if I want to delete a row I can select erase action  and I will see a qu
 if really I want to delete the row I will select yes if not I will select no.
 
  
+### conclusion:
+
+One of the nice things with Qt is that it provides a large set of libraries as well as the GUI stuff 
 
 
-
-Thank you.
+>> Thank you.
