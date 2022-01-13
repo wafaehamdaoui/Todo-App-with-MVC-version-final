@@ -2,7 +2,7 @@
 
 **Notes:**
 
-Please before execute the project change the path of Tasks and Login database in login.cpp and mainwindow.cpp  .
+Please before execute the project change the path of Tasks and Login database in login.cpp and mainwindow.cpp for not have "could not open the database" error .
 
 Then please go to terminal and INSERT INTO Login TABLE the following rows:
 
