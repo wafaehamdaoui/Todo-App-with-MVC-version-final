@@ -724,3 +724,5 @@ One of the nice things with Qt is that it provides a large set of libraries as w
 
 
 >> Thank you.
+
+> Seriously, I applaude the dedication and work you have done so far. No comment.
