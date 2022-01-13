@@ -709,9 +709,16 @@ And fill in the necessary information:
 
 ![image](https://user-images.githubusercontent.com/75392302/149242500-a49feda7-8d49-4148-a274-cc256b670b5d.png)
 
-But if I want to modify a row I should select modify Action .
+But if I want to modify a row I should select modify Action. this bring the same dialog I used to create the task and I can modify description,tag,date and set checkbox checked or not .
 
-finally if I want to delete a row I can select erase action .
+![image](https://user-images.githubusercontent.com/75392302/149245254-f4df48dd-7dba-4aaa-b405-15ec753bcf7f.png)
+
+
+finally if I want to delete a row I can select erase action  and I will see a questioned dialog to verify I really want to erase the row :
+
+![image](https://user-images.githubusercontent.com/75392302/149245660-466cc4ef-76d3-415e-9ee4-9f7f7ffd08c6.png)
+
+if really I want to delete the row I will select yes if not I will select no.
 
  
 
