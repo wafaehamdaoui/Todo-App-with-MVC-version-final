@@ -2,12 +2,7 @@
 
 **Notes:**
 
-Please before execute the project change the path of Tasks and Login database in login.cpp and mainwindow.cpp for not have "could not open the database" error .
-
-Then please go to terminal and INSERT INTO Login TABLE the following rows:
-
-![belcaid](https://user-images.githubusercontent.com/75392302/149240019-90600370-ea6a-48bd-a56b-f60ea5fcdabd.PNG)
-
+***Please before execute the project change the path of Tasks and Login database in login.cpp and mainwindow.cpp for not have "could not open the database" error***
 
 ## Introduction:
 Todo list is an application for organization of a list of tasks you need to complete, or things that you want to do in order of Date (and may be in order of priority). The first part of the project will focus on the core features and skeleton of the application . In part two we’ll take care of text-formatting ( like add, remove, save, clear... ). And in part three, we’ll add some useful extensions like login and find dialog.
