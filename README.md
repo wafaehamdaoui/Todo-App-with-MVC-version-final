@@ -700,6 +700,19 @@ Reject Login:
 ![image](https://user-images.githubusercontent.com/75392302/149222262-5bfdcf1c-43f2-48c1-ba33-cef8726dc027.png)
 
  I Added a double click on each row, this bring the same dialog I used to create the task, bug now it's filled with task information (desciption, finished ...). The user could modify any apect this task by editing the dialog.
+
+For Example if I want to add a new task I just double clicked  and select insert Action as below
+
+![image](https://user-images.githubusercontent.com/75392302/149242385-3b823e37-eae7-4718-8aff-61e0f415e446.png)
+
+And fill in the necessary information:
+
+![image](https://user-images.githubusercontent.com/75392302/149242500-a49feda7-8d49-4148-a274-cc256b670b5d.png)
+
+But if I want to modify a row I should select modify Action .
+
+finally if I want to delete a row I can select erase action .
+
  
 
 
